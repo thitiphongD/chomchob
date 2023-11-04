@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+  db:
+    image: mariadb:11.1
+    environment:
+      - MYSQL_USER=db_user
+      - MYSQL_ROOT_PASSWORD=db_password
+      - MYSQL_PASSWORD=db_password
+      - MYSQL_DATABASE=db
+    volumes:
+      - ./.store/mariadb:/var/lib/mysql
+    ports:
+      - 3304:3306
