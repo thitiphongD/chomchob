@@ -40,15 +40,6 @@ const getExchangeRate = async (currencyId) => {
     }
 };
 
-
-// function getExchangeRateV2(fromCurrency, toCurrency) {
-//     if (exchangeRates[fromCurrency] && exchangeRates[fromCurrency][toCurrency]) {
-//         return exchangeRates[fromCurrency][toCurrency];
-//     } else {
-//         throw new Error("Exchange rate not found for the given currencies.");
-//     }
-// }
-
 const getExchangeBetweenRate = async (payCurrencyId, buyCurrencyId) => {
     try {
         const payCurrencyRate = await getExchangeRate(payCurrencyId);
@@ -64,33 +55,6 @@ const getExchangeBetweenRate = async (payCurrencyId, buyCurrencyId) => {
         throw new Error('Error fetching exchange rate');
     }
 };
-
-const calculateBetweenCrypto = async (senderBalance, senderWallet, amount, exchangeRate, receiverBalance, receiverWallet) => {
-    try {
-
-    } catch (error) {
-        console.error('Error fetching exchange rate:', error);
-        throw new Error('Error fetching exchange rate');
-    }
-}
-
-function transferCrypto(sender, receiver, amount, fromCurrency, toCurrency) {
-    try {
-        const exchangeRate = getExchangeRateV2(fromCurrency, toCurrency);
-        const convertedAmount = amount * exchangeRate;
-        if (sender.balance >= amount) {
-            sender.balance -= amount;
-            receiver.balance += convertedAmount;
-            console.log(
-                `${sender.name} transferred ${amount} ${fromCurrency} to ${receiver.name}. ${receiver.name} received ${convertedAmount} ${toCurrency}.`
-            );
-        } else {
-            console.log("Insufficient balance.");
-        }
-    } catch (error) {
-        console.error(error.message);
-    }
-}
 
 const calculateCrypto = async (senderBalance, senderWallet, amount, exchangeRate, receiverBalance, receiverWallet) => {
     if (amount > senderBalance) {
@@ -142,8 +106,8 @@ exports.transferCurrency = async (req, res) => {
         await db.query('UPDATE user_wallets SET balance = ? WHERE id = ? AND currency_id = ?', [updatedBalances.senderWallet, dataSender.wallet_id, currency_id]);
         await db.query('UPDATE user_wallets SET balance = ? WHERE id = ? AND currency_id = ?', [updatedBalances.receiverWallet, dataReceiver.wallet_id, currency_id]);
 
-        await db.query('INSERT INTO users_transaction (id, sender_id, receiver_id, currency_id, receiver_currency_id, wallet_sender_id, wallet_receiver_id, amount, currency_balance, symbol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [transactionId, sender_id, receiver_id, currency_id, currency_id, dataSender.wallet_id, dataReceiver.wallet_id, amount, updatedBalances.amountResult, dataReceiver.symbol]);
+        await db.query('INSERT INTO users_transaction (id, sender_id, receiver_id, currency_id, receiver_currency_id, wallet_sender_id, wallet_receiver_id, amount, currency_balance, symbol, amount_symbol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [transactionId, sender_id, receiver_id, currency_id, currency_id, dataSender.wallet_id, dataReceiver.wallet_id, amount, updatedBalances.amountResult, dataReceiver.symbol, 'USD']);
 
         const transaction = {
             transactionId: transactionId,
@@ -193,8 +157,8 @@ exports.transferDifferenceCurrency = async (req, res) => {
         await db.query('UPDATE user_wallets SET balance = ? WHERE id = ? AND currency_id = ?', [updatedSenderBalance, dataSender.wallet_id, pay_currency_id]);
         await db.query('UPDATE user_wallets SET balance = ? WHERE id = ? AND currency_id = ?', [updatedReceiverBalance, dataSender.wallet_id, buy_currency_id]);
 
-        await db.query('INSERT INTO users_transaction (id, sender_id, receiver_id, currency_id, receiver_currency_id, wallet_sender_id, wallet_receiver_id, amount, currency_balance, symbol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [transactionId, sender_id, receiver_id, pay_currency_id, buy_currency_id, dataSender.wallet_id, dataReceiver.wallet_id, amountToPay, amountToBuy, dataReceiver.symbol]);
+        await db.query('INSERT INTO users_transaction (id, sender_id, receiver_id, currency_id, receiver_currency_id, wallet_sender_id, wallet_receiver_id, amount, currency_balance, symbol, amount_symbol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [transactionId, sender_id, receiver_id, pay_currency_id, buy_currency_id, dataSender.wallet_id, dataReceiver.wallet_id, amount, amountToBuy, dataReceiver.symbol, dataSender.symbol]);
         // const transaction = {
         //     transactionId: transactionId,
         //     sender_id: sender_id,
