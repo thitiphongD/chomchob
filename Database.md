@@ -1,37 +1,4 @@
-# Database Design
-
-## Item
-
-- ItemID (Primary Key)
-- ItemName
-- Description
-- Price
-- StartDate
-- EndDate
-
-## Purchase
-
-- PurchaseID (Primary Key)
-- CustomerID
-- PurchaseDate
-- Code
-
-## Promotion
-
-- PromotionID (Primary Key)
-- ItemID (Foreign Key)
-- StartDate
-- EndDate
-- DiscountPrice
-
-## Bundle
-
-- BundleID (Primary Key)
-- BundleName
-- BundleDescription
-- BundlePrice
-
-### Sequelize Model
+## Sequelize Database Design
 
 ```javascript
 const Item = sequelize.define("Item", {
@@ -86,3 +53,19 @@ Purchase.belongsTo(Item);
 Item.hasMany(Promotion);
 Promotion.belongsTo(Item);
 ```
+
+## ERD Diagram
+
+![ERD Diagram](/ERD-database.png)
+
+## แนวคิดในการออกแบบฐานข้อมูล
+
+1. **Item (รายการสินค้า):** การเก็บข้อมูลสินค้า เช่น ชื่อ, รายละเอียด, ราคา, วันที่เปิดขาย, วันที่ปิดขาย เพื่อให้สามารถติดตามและจัดการสินค้า.
+
+2. **Purchase (การซื้อขาย):** เก็บข้อมูลเกี่ยวกับการซื้อขาย เช่น ID การซื้อ, ID ลูกค้า, วันที่ซื้อ, และรหัสที่ลูกค้าได้รับ เพื่อติดตามการทำธุรกรรมของลูกค้า.
+
+3. **Promotion (โปรโมชั่น):** ใช้ในการจัดการโปรโมชั่นที่เกี่ยวข้องกับการขายสินค้า โดยสามารถกำหนดการลดราคาในช่วงเวลาที่กำหนดได้ เพื่อส่งเสริมการขายสินค้าในระบบ.
+
+4. **Bundle (แบบ Bundle):** ใช้ในการจัดการการขายแบบ Bundle ที่เกี่ยวข้องกับการรวมกันของสินค้าในราคาพิเศษ
+
+การออกแบบนี้ช่วยจัดการการซื้อขาย code item สำหรับสินค้าต่าง ๆ ได้อย่างมีประสิทธิภาพ และช่วยให้ผู้ใช้สามารถติดตามและจัดการรายการสินค้า, การซื้อขาย, โปรโมชั่น, และการขายแบบ Bundle
